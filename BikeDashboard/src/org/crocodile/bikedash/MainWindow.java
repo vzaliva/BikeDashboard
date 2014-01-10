@@ -1,33 +1,9 @@
 package org.crocodile.bikedash;
 
-import java.awt.EventQueue;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JFrame;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JButton;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.JLabel;
-
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.SwingConstants;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
+import javax.swing.*;
 
 public class MainWindow
 {
@@ -239,8 +215,8 @@ public class MainWindow
 
     protected void onQuit()
     {
-        // TODO Auto-generated method stub
-        
+        reader.stop();
+        System.exit(0);
     }
 
     protected void onSave()
