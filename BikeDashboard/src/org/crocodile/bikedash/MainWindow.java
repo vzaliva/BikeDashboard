@@ -26,15 +26,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import org.crocodile.bikedash.TickReader.TickListener;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
-public class MainWindow implements TickListener
+public class MainWindow
 {
     private JFrame frame;
-
+    private TickReader reader;
+    private Estimator estimator = new Estimator();
+    
     /**
      * Launch the application.
      */
@@ -61,6 +61,9 @@ public class MainWindow implements TickListener
     public MainWindow()
     {
         initialize();
+        reader = new RandomTickReader();
+        reader.addListener(estimator);
+        reader.start();
     }
 
     /**
@@ -269,12 +272,4 @@ public class MainWindow implements TickListener
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    public void tick(Object context, long timeStamp)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

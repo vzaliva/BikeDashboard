@@ -23,6 +23,9 @@ public abstract class TickReader
         this(null);
     }
 
+    public abstract void start();
+    public abstract void stop();
+    
     public void addListener(TickListener x)
     {
         listeners.add(x);
