@@ -38,9 +38,9 @@ public abstract class TickReader
         listeners.clear();
     }
     
-    protected void broadcastTick(long timestamps)
+    protected void broadcastTick(long timestamp)
     {
         for(TickListener l:listeners)
-            l.tick(context, timestamps);
+            l.tick(context, timestamp);
     }
 }

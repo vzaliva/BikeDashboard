@@ -3,24 +3,35 @@ package org.crocodile.bikedash;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+
 import java.awt.GridBagLayout;
+
 import javax.swing.JButton;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JLabel;
+
 import java.awt.Color;
 import java.awt.Font;
+
 import javax.swing.SwingConstants;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+import org.crocodile.bikedash.TickReader.TickListener;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
-public class MainWindow
+public class MainWindow implements TickListener
 {
     private JFrame frame;
 
@@ -254,6 +265,13 @@ public class MainWindow
     }
 
     protected void onRecord()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void tick(Object context, long timeStamp)
     {
         // TODO Auto-generated method stub
         
