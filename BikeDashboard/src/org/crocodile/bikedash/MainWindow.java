@@ -7,6 +7,7 @@ import javax.swing.*;
 
 public class MainWindow
 {
+    private static final String VERSION = "1.0";
     private JFrame frame;
     private TickReader reader;
     private Estimator estimator = new Estimator();
@@ -209,8 +210,10 @@ public class MainWindow
 
     protected void onAbout()
     {
-        // TODO Auto-generated method stub
-        
+        JOptionPane.showMessageDialog(frame,
+            "BikeDashboard v"+VERSION+"\n"+"https://github.com/vzaliva/BikeDashboard",
+            "About",
+            JOptionPane.PLAIN_MESSAGE);        
     }
 
     protected void onQuit()
@@ -221,8 +224,7 @@ public class MainWindow
 
     protected void onSave()
     {
-        // TODO Auto-generated method stub
-        
+        JOptionPane.showMessageDialog(frame, "Not yet implemented!","Warning",JOptionPane.WARNING_MESSAGE);        
     }
 
     protected void onReset()
