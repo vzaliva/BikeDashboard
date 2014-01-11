@@ -33,8 +33,8 @@ public class Estimator implements TickListener
         if(state != State.RUNNING)
             throw new IllegalStateException();
         state = State.STOPPED;
-        last_start_time = -1;
         previously_exhausted_time += System.currentTimeMillis() - last_start_time;
+        last_start_time = -1;
     }
 
     /**
@@ -42,7 +42,8 @@ public class Estimator implements TickListener
      */
     public void reset()
     {
-        last_start_time = System.currentTimeMillis();
+        if(last_start_time != -1)
+            last_start_time = System.currentTimeMillis();
         previously_exhausted_time = 0l;
     }
 
@@ -65,7 +66,10 @@ public class Estimator implements TickListener
      */
     public long getTime()
     {
-        return 13 * 60 * 60 + 10;
+        if(last_start_time == -1)
+            return previously_exhausted_time;
+        else
+            return previously_exhausted_time + (System.currentTimeMillis() - last_start_time);
     }
 
     /**

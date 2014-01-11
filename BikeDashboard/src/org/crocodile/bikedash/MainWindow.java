@@ -3,25 +3,33 @@ package org.crocodile.bikedash;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.*;
 
 public class MainWindow
 {
-    private static final Color  STOPPED_COLOR = new Color(0, 128, 0);
-    private static final Color  RUNNING_COLOR = new Color(128, 0, 0);
+    private static final String VERSION                      = "1.0";
+    private Estimator           estimator                    = new Estimator();
 
-    private static final String VERSION       = "1.0";
+    private static final Color  STOPPED_COLOR                = new Color(0, 128, 0);
+    private static final Color  RUNNING_COLOR                = new Color(128, 0, 0);
+    private static final long   MEASURMENTS_UI_UPDATE_PERIOD = 1000l;
+
     private JFrame              frame;
     private TickReader          reader;
-    private Estimator           estimator     = new Estimator();
+
     private JButton             btnRecord;
     private JButton             btnStop;
     private JButton             btnReset;
     private JButton             btnSave;
+
     private JLabel              lblTimeVal;
     private JLabel              lblRPMVal;
     private JLabel              lblCalVal;
+
+    private Timer               timer                        = new Timer();
 
     /**
      * Launch the application.
@@ -53,6 +61,25 @@ public class MainWindow
         reader = new RandomTickReader();
         reader.addListener(estimator);
         reader.start();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                updateMesurementDisplay();
+            }
+        }, 0, MEASURMENTS_UI_UPDATE_PERIOD);
+    }
+
+    protected void updateMesurementDisplay()
+    {
+        long t = estimator.getTime()/1000l;
+        long h = t/3600;
+        long m = (t % 3600) / 60;
+        long s = t % 60;               
+        lblTimeVal.setText(String.format("%02d:%02d:%02d", h,m,s));
+        lblRPMVal.setText(""+Math.round(estimator.getRPM()));
+        lblCalVal.setText(""+Math.round(estimator.getCalories()));
     }
 
     /**
@@ -234,6 +261,7 @@ public class MainWindow
     protected void onReset()
     {
         estimator.reset();
+        updateMesurementDisplay();
         updateButtonsAndColors();
     }
 
