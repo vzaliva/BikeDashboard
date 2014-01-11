@@ -1,49 +1,35 @@
 
 package org.crocodile.bikedash;
 
-public class RandomTickReader extends TickReader implements Runnable
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class RandomTickReader extends TickReader
 {
     private static final long PERIOD_MS = 300;
-    private Thread            thread;
+
+    private Timer             timer     = new Timer();
 
     public RandomTickReader()
     {
-        thread = new Thread(this);
-    }
-
-    @Override
-    public void run()
-    {
-        while(true)
-        {
-            try
-            {
-                Thread.sleep(PERIOD_MS);
-            } catch(InterruptedException e)
-            {
-                break;
-            }
-            broadcastTick(System.currentTimeMillis());
-        }
     }
 
     @Override
     public void start()
     {
-        thread.start();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                broadcastTick(System.currentTimeMillis());
+            }
+        }, 0, PERIOD_MS);
     }
 
     @Override
     public void stop()
     {
-        thread.interrupt();
-        try
-        {
-            thread.join();
-        } catch(InterruptedException e)
-        {
-            // ignore
-        }
+        timer.cancel();
     }
 
 }
