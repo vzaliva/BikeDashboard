@@ -31,11 +31,33 @@ public class MainWindow
 
     private Timer               timer                        = new Timer();
 
+    public static boolean isOSX()
+    {
+        String osName = System.getProperty("os.name");
+        return osName.contains("OS X");
+    }
+
     /**
      * Launch the application.
      */
     public static void main(String[] args)
     {
+        if(isOSX())
+        {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BikeDashboard");
+            try
+            {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch(ClassNotFoundException | InstantiationException | IllegalAccessException
+                    | UnsupportedLookAndFeelException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
         EventQueue.invokeLater(new Runnable() {
             public void run()
             {
@@ -73,13 +95,13 @@ public class MainWindow
 
     protected void updateMesurementDisplay()
     {
-        long t = estimator.getTime()/1000l;
-        long h = t/3600;
+        long t = estimator.getTime() / 1000l;
+        long h = t / 3600;
         long m = (t % 3600) / 60;
-        long s = t % 60;               
-        lblTimeVal.setText(String.format("%02d:%02d:%02d", h,m,s));
-        lblRPMVal.setText(""+Math.round(estimator.getRPM()));
-        lblCalVal.setText(""+Math.round(estimator.getCalories()));
+        long s = t % 60;
+        lblTimeVal.setText(String.format("%02d:%02d:%02d", h, m, s));
+        lblRPMVal.setText("" + Math.round(estimator.getRPM()));
+        lblCalVal.setText("" + Math.round(estimator.getCalories()));
     }
 
     /**
@@ -212,19 +234,22 @@ public class MainWindow
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
 
-        JMenu mnFile = new JMenu("File");
-        mnFile.setMnemonic('F');
-        menuBar.add(mnFile);
-
-        JMenuItem mntmQuit = new JMenuItem("Quit");
-        mntmQuit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                onQuit();
-            }
-        });
-        mntmQuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_MASK));
-        mnFile.add(mntmQuit);
+        if(!isOSX())
+        {
+            JMenu mnFile = new JMenu("File");
+            mnFile.setMnemonic('F');
+            menuBar.add(mnFile);
+            
+            JMenuItem mntmQuit = new JMenuItem("Quit");
+            mntmQuit.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    onQuit();
+                }
+            });
+            mntmQuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_MASK));
+            mnFile.add(mntmQuit);
+        }
 
         JMenu mnHelp = new JMenu("Help");
         mnHelp.setMnemonic('H');
