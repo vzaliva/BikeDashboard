@@ -1,10 +1,17 @@
 
 package org.crocodile.bikedash;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.crocodile.bikedash.TickReader.TickListener;
 
 public class Estimator implements TickListener
 {
+    static final int  WINDOW_SIZE = 5;
+    static final long MAX_DELAY   = 1000l;
+    static List<Long> buf         = new ArrayList<Long>(5);
+
     public enum State
     {
         STOPPED, RUNNING
@@ -17,7 +24,12 @@ public class Estimator implements TickListener
     @Override
     public void tick(Object context, long timeStamp)
     {
-        // TODO Auto-generated method stub
+        synchronized(buf)
+        {
+            buf.add(timeStamp);
+            if(buf.size() > WINDOW_SIZE)
+                buf.remove(0);
+        }
     }
 
     public void start()
@@ -45,6 +57,10 @@ public class Estimator implements TickListener
         if(last_start_time != -1)
             last_start_time = System.currentTimeMillis();
         previously_exhausted_time = 0l;
+        synchronized(buf)
+        {
+            buf.clear();
+        }
     }
 
     public State getState()
@@ -58,7 +74,25 @@ public class Estimator implements TickListener
      */
     public float getRPM()
     {
-        return 13;
+        if(state != State.RUNNING)
+            return 0;
+
+        int n;
+        long last, first;
+        synchronized(buf)
+        {
+            n = buf.size();
+            if(n < 2)
+                return 0;
+            last = buf.get(n - 1);
+            if((System.currentTimeMillis() - last) > MAX_DELAY)
+                return 0;
+            first = buf.get(0);
+        }
+        if(last == first)
+            return 0;
+        float p = (last - first) / (float)(n - 1);
+        return (float) (1.0 / (p / 60000.0));
     }
 
     /**
