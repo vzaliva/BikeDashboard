@@ -27,7 +27,7 @@ public class RandomTickReader extends TickReader
     }
 
     @Override
-    public void stop()
+    public void stop() throws Exception
     {
         timer.cancel();
     }
