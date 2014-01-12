@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 public class RandomTickReader extends TickReader
 {
-    private static final long PERIOD_MS = 300;
+    private static final long PERIOD_MS = 180;
 
     private Timer             timer     = new Timer();
 

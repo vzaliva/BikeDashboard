@@ -8,10 +8,13 @@ import org.crocodile.bikedash.TickReader.TickListener;
 
 public class Estimator implements TickListener
 {
-    static final int  TICKS_PER_ROTATION = 4;
-    static final int  WINDOW_SIZE        = 5;
-    static final long MAX_DELAY          = 1000l;
-    static List<Long> buf                = new ArrayList<Long>(5);
+    private static final int  TICKS_PER_ROTATION = 4;
+    private static final int  WINDOW_SIZE        = 5;
+    private static final long MAX_DELAY          = 3000l;
+    private List<Long>        buf                = new ArrayList<Long>(3 * TICKS_PER_ROTATION);
+    private float             last_rpm           = 0f;
+    private long              last_rpm_time      = -1l;
+    private float             calories           = 0f;
 
     public enum State
     {
@@ -31,6 +34,20 @@ public class Estimator implements TickListener
             if(buf.size() > WINDOW_SIZE)
                 buf.remove(0);
         }
+
+        // Energy expenditure estimation
+        float rpm = getRPM();
+        if(last_rpm != 0 && last_rpm_time != -1)
+        {
+            long dt = timeStamp - last_rpm_time;
+            float avgRPM = (last_rpm + rpm)/2;
+            float cal_per_hour = 18.7f * avgRPM - 1132f;
+            if(cal_per_hour>0 && dt>0)
+                calories+= (cal_per_hour/(60l*60l*1000l))*dt;
+        }
+
+        last_rpm = rpm;
+        last_rpm_time = timeStamp;
     }
 
     public void start()
@@ -62,6 +79,9 @@ public class Estimator implements TickListener
         {
             buf.clear();
         }
+        last_rpm = 0f;
+        last_rpm_time = -1l;
+        calories = 0l;
     }
 
     public State getState()
@@ -93,7 +113,7 @@ public class Estimator implements TickListener
         if(last == first)
             return 0;
         float p = (last - first) / (float) (n - 1);
-        return (float) (1.0 / (TICKS_PER_ROTATION*p / 60000.0));
+        return (float) (1.0 / (TICKS_PER_ROTATION * p / 60000.0));
     }
 
     /**
@@ -113,7 +133,7 @@ public class Estimator implements TickListener
      */
     public float getCalories()
     {
-        return 416;
+        return calories;
     }
 
 }

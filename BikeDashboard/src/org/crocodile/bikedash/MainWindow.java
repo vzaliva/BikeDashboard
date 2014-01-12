@@ -82,7 +82,8 @@ public class MainWindow
     {
         initialize();
         updateButtonsAndColors();
-        reader = new SerialReader();
+        //reader = new SerialReader();
+        reader = new RandomTickReader(); 
         reader.addListener(estimator);
         reader.start();
 
