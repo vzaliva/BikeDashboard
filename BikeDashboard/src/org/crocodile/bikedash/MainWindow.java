@@ -266,6 +266,28 @@ public class MainWindow
             mnFile.add(mntmQuit);
         }
 
+        JMenu mnFitBit = new JMenu("FitBit");
+        menuBar.add(mnFitBit);
+
+        JMenuItem mntmLogin = new JMenuItem("Login");
+        mntmLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                onLogin();
+            }
+        });
+        mnFitBit.add(mntmLogin);
+
+        JMenuItem mntmLogout = new JMenuItem("Logout");
+        mntmLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                onLogout();
+            }
+        });
+        mnFitBit.add(mntmLogout);
+
+        
         JMenu mnHelp = new JMenu("Help");
         mnHelp.setMnemonic('H');
         mnHelp.setMnemonic(KeyEvent.VK_HELP);
@@ -279,6 +301,18 @@ public class MainWindow
             }
         });
         mnHelp.add(mntmAbout);
+    }
+
+    protected void onLogout()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    protected void onLogin()
+    {
+        // TODO Auto-generated method stub
+        
     }
 
     protected void onAbout()
