@@ -2,23 +2,35 @@
 package org.crocodile.bikedash;
 
 import jssc.*;
+import java.util.regex.Pattern;
 
 public class SerialReader extends TickReader implements SerialPortEventListener
 {
     StringBuffer        data = new StringBuffer();
+    Pattern PORT_PATTERN = Pattern.compile("tty\\.usb.*");
 
     // TODO: move to preferences
-    static String port;
+    static String port = null;
     private SerialPort  serialPort;
 
-    public SerialReader()
+    public SerialReader() throws Exception
     {
-        String[] portNames = SerialPortList.getPortNames();
+        findPort();
+        if(port==null)
+            throw new Exception("Port not found");
+    }
+
+    private void findPort()
+    {
+        //TODO: this should be done via preferences dialog. For now hardcoded
+        //to use first serial port discovered.
+        String[] portNames = SerialPortList.getPortNames(PORT_PATTERN);
         for(int i = 0; i < portNames.length; i++)
         {
             port = portNames[i];
-            System.out.println(portNames[i]);
+            System.err.println("- Found port: "+portNames[i]);
         }
+        System.err.println("Using port: "+port);
     }
 
     @Override
