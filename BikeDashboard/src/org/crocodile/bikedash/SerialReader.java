@@ -13,42 +13,14 @@ public class SerialReader extends TickReader implements SerialPortEventListener
     static String      port         = null;
     private SerialPort serialPort;
 
-    /**
-     * @deprecated
-     * @throws Exception
-     */
-    public SerialReader() throws Exception
-    {
-        this(null);
-    }
-    
     public SerialReader(String sport) throws Exception
     {
-        if(port == null)
-        {
-            findPort();
-            if(port == null)
-                throw new Exception("Port not found");
-        } else
-            port = sport;
+        port = sport;
     }
 
     public static String[] getPorts()
     {
         return SerialPortList.getPortNames(PORT_PATTERN);
-    }
-
-    private void findPort()
-    {
-        // TODO: this should be done via preferences dialog. For now hardcoded
-        // to use first serial port discovered.
-        String[] portNames = SerialPortList.getPortNames(PORT_PATTERN);
-        for(int i = 0; i < portNames.length; i++)
-        {
-            port = portNames[i];
-            System.err.println("- Found port: " + portNames[i]);
-        }
-        System.err.println("Using port: " + port);
     }
 
     @Override

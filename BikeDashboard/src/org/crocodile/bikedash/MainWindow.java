@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
@@ -30,6 +31,7 @@ public class MainWindow
     private JLabel              lblCalVal;
 
     private Timer               timer                        = new Timer();
+    private Preferences         prefs;
 
     public static boolean isOSX()
     {
@@ -80,6 +82,8 @@ public class MainWindow
      */
     public MainWindow() throws Exception
     {
+        prefs = Preferences.userRoot().node("org.crocodile.bikedash");
+
         initialize();
         updateButtonsAndColors();
 
@@ -326,19 +330,31 @@ public class MainWindow
 
     protected void onStart()
     {
-        if(reader==null)
-        {            
+        if(reader == null)
+        {
             try
             {
-                reader = new SerialReader();
-                //reader = new RandomTickReader(); 
+                String port = prefs.get("port", null);
+                if(port == null)
+                {
+                    // Port not set, try to find it automatically
+                    String ports[] = SerialReader.getPorts();
+                    if(ports == null || ports.length == 0)
+                        throw new Exception("Device not connected!");
+                    else if(ports.length > 1)
+                        throw new Exception("More than one port available. Please choose via preferences!");
+                    else
+                        port = ports[0];
+                }
+                reader = new SerialReader(port);
+                // reader = new RandomTickReader();
                 reader.addListener(estimator);
                 reader.start();
             } catch(Exception e)
             {
                 reader = null;
-                JOptionPane.showMessageDialog(frame, "Error:\n"+e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-                //TODO: log exception
+                JOptionPane.showMessageDialog(frame, "Error:\n" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                // TODO: log exception
                 return;
             }
         }
