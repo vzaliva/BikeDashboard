@@ -82,10 +82,6 @@ public class MainWindow
     {
         initialize();
         updateButtonsAndColors();
-        reader = new SerialReader();
-        //reader = new RandomTickReader(); 
-        reader.addListener(estimator);
-        reader.start();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -330,6 +326,23 @@ public class MainWindow
 
     protected void onStart()
     {
+        if(reader==null)
+        {            
+            try
+            {
+                reader = new SerialReader();
+                //reader = new RandomTickReader(); 
+                reader.addListener(estimator);
+                reader.start();
+            } catch(Exception e)
+            {
+                reader = null;
+                JOptionPane.showMessageDialog(frame, "Error:\n"+e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                //TODO: log exception
+                return;
+            }
+        }
+
         estimator.start();
         updateButtonsAndColors();
     }
