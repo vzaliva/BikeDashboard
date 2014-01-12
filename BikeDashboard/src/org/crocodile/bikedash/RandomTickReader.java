@@ -15,7 +15,7 @@ public class RandomTickReader extends TickReader
     }
 
     @Override
-    public void start()
+    public void start() throws Exception
     {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override

@@ -23,7 +23,7 @@ public abstract class TickReader
         this(null);
     }
 
-    public abstract void start();
+    public abstract void start() throws Exception;
     public abstract void stop();
     
     public void addListener(TickListener x)

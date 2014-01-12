@@ -75,8 +75,10 @@ public class MainWindow
 
     /**
      * Create the application.
+     * 
+     * @throws Exception
      */
-    public MainWindow()
+    public MainWindow() throws Exception
     {
         initialize();
         updateButtonsAndColors();
@@ -239,7 +241,7 @@ public class MainWindow
             JMenu mnFile = new JMenu("File");
             mnFile.setMnemonic('F');
             menuBar.add(mnFile);
-            
+
             JMenuItem mntmQuit = new JMenuItem("Quit");
             mntmQuit.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
