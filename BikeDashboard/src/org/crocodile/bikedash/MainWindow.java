@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.*;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -32,11 +33,21 @@ public class MainWindow
 
     private Timer               timer                        = new Timer();
     private Preferences         prefs;
+    private Logger log;
 
     public static boolean isOSX()
     {
         String osName = System.getProperty("os.name");
         return osName.contains("OS X");
+    }
+
+    private void initLog()
+    {
+        log = Logger.getLogger("org.crocodile.bikedash");
+        log.setLevel(Level.ALL);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter());
+        log.addHandler(handler);
     }
 
     /**
@@ -82,6 +93,7 @@ public class MainWindow
      */
     public MainWindow() throws Exception
     {
+        initLog();
         prefs = Preferences.userRoot().node("org.crocodile.bikedash");
 
         initialize();
@@ -282,7 +294,7 @@ public class MainWindow
             reader.stop();
         } catch(Exception e)
         {
-            e.printStackTrace();
+            log.log(Level.WARNING, "Error stopping reader", e);
         }
         System.exit(0);
     }
@@ -354,7 +366,7 @@ public class MainWindow
             {
                 reader = null;
                 JOptionPane.showMessageDialog(frame, "Error:\n" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-                // TODO: log exception
+                log.log(Level.WARNING, "Error creating reader", e);
                 return;
             }
         }

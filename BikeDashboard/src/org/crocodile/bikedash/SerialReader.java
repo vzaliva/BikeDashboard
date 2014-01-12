@@ -9,7 +9,6 @@ public class SerialReader extends TickReader implements SerialPortEventListener
     StringBuffer       data         = new StringBuffer();
     static Pattern     PORT_PATTERN = Pattern.compile("tty\\.usb.*");
 
-    // TODO: move to preferences
     static String      port         = null;
     private SerialPort serialPort;
 
