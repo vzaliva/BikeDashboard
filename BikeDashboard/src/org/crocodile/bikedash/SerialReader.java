@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 
-import gnu.io.*;
 
 public class SerialReader extends TickReader implements SerialPortEventListener
 {

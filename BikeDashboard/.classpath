@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/RXTXcomm.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jssc.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="BikeDashboard/lib"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/BikeDashboard/lib/jssc-2.6.0-javadoc.jar!/javadoc"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
