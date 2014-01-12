@@ -8,7 +8,7 @@ public class SerialReader extends TickReader implements SerialPortEventListener
     StringBuffer        data = new StringBuffer();
 
     // TODO: move to preferences
-    static final String PORT = "/dev/tty.usbmodem1411";
+    static String port;
     private SerialPort  serialPort;
 
     public SerialReader()
@@ -16,6 +16,7 @@ public class SerialReader extends TickReader implements SerialPortEventListener
         String[] portNames = SerialPortList.getPortNames();
         for(int i = 0; i < portNames.length; i++)
         {
+            port = portNames[i];
             System.out.println(portNames[i]);
         }
     }
@@ -23,7 +24,7 @@ public class SerialReader extends TickReader implements SerialPortEventListener
     @Override
     public void start() throws Exception
     {
-        serialPort = new SerialPort(PORT);
+        serialPort = new SerialPort(port);
 
         serialPort.openPort();
         serialPort.setParams(9600, 8, 1, 0);
