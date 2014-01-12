@@ -1,0 +1,236 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      7864,        227]
+NotebookOptionsPosition[      7022,        193]
+NotebookOutlinePosition[      7378,        209]
+CellTagsIndexPosition[      7335,        206]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+From: http://www.nutristrategy.com/caloriesburnedcycling.htm\
+\>", "Text",
+ CellChangeTimes->{{3.59854068816087*^9, 3.598540691535984*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"x", "=", 
+   RowBox[{"{", 
+    RowBox[{"177", ",", "325", ",", "413", ",", "620", ",", "738"}], "}"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5985406294434147`*^9, 3.598540649207905*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ListLinePlot", "[", 
+  RowBox[{"x", ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"0", ",", "5"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "800"}], "}"}]}], "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.598540650357214*^9, 3.598540654066482*^9}, {
+  3.598540695300673*^9, 3.598540735297737*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{}, {}, 
+    {RGBColor[0.24720000000000014`, 0.24, 0.6], 
+     LineBox[{{1., 177.}, {2., 325.}, {3., 413.}, {4., 620.}, {5., 
+      738.}}]}}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->True,
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0},
+  Method->{},
+  PlotRange->{{0, 5}, {0, 800}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{3.5985406545109797`*^9, 3.5985407365985126`*^9}]
+}, Open  ]],
+
+Cell["\<\
+It should be taken with grain of salt because according to this:
+
+http://www.crankcycling.com/measuring-energy-expenditure-on-the-bike-continued/
+
+\[OpenCurlyDoubleQuote]Riders frequently ask me if their body weight makes a \
+difference, and the answer is no.\[NonBreakingSpace]\[NonBreakingSpace]\
+\[NonBreakingSpace] A larger rider can typically put out more watts, and \
+therefore\[NonBreakingSpace] do more kilojoules in a given amount of time.\
+\[NonBreakingSpace]\[NonBreakingSpace]\[NonBreakingSpace] But is still takes \
+a 100lb rider just as many calories to do 150 watts for an hour,as it takes a \
+200lb rider to do 150 watts for an hour.\[NonBreakingSpace] The only \
+difference is that the larger rider will burn more calories as part of his \
+basal metabolic rate, but he would burn those even if he were sitting at his \
+desk typing on his keyboard, so that doesn\[CloseCurlyQuote]t really count \
+towards his energy expenditure from exercise.\[CloseCurlyDoubleQuote]\
+\>", "Text",
+ CellChangeTimes->{{3.59854077521798*^9, 3.5985408123809557`*^9}}],
+
+Cell["\<\
+Assuming linear. Data points for \[OpenCurlyDoubleQuote]very light\
+\[CloseCurlyDoubleQuote] and \[OpenCurlyDoubleQuote]very vigorous\
+\[CloseCurlyDoubleQuote].\
+\>", "Text",
+ CellChangeTimes->{{3.598541097596566*^9, 3.598541123296989*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"rpms", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"70", ",", "100"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"cals", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"177", ",", " ", "738"}], "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.598541051375292*^9, 3.5985410922827263`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"data", "=", 
+  RowBox[{"Transpose", "[", 
+   RowBox[{"{", 
+    RowBox[{"rpms", ",", "cals"}], "}"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5985411448693523`*^9, 3.5985411532387123`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"70", ",", "177"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"100", ",", "738"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.598541153976075*^9, 3.5985411572795753`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"line", "=", 
+  RowBox[{"Fit", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "r"}], "}"}], ",", "r"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5985408276904993`*^9, 3.598540834215187*^9}, {
+  3.598541165485523*^9, 3.598541196932989*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", "1131.9999999999993`"}], "+", 
+  RowBox[{"18.7`", " ", "r"}]}]], "Output",
+ CellChangeTimes->{{3.5985411769316387`*^9, 3.598541197236679*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{"line", ",", 
+   RowBox[{"{", 
+    RowBox[{"r", ",", "0", ",", "200"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.598541220385688*^9, 3.598541235394291*^9}, {
+  3.598541327286854*^9, 3.59854132738131*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {}, 
+   {Hue[0.67, 0.6, 0.6], LineBox[CompressedData["
+1:eJwVj3s0lAkAxUeFchqptsJ6Nemh05TZHCvRXELKIyYjYcprzIfIK7RoPYqG
+WUwkLTPRfNRy1quItfiUx1ZbMbVt0YO2pNWWlJ28d/aPe+4/99zfvWsDjnH4
+C2g0motS/zsjd1YmNejbxeydHZ2vEVPXF5sYhhM17LnHml4hVWKqI6Ga3ES0
+s+8PGXbKK8RUt2mUQI24z476ZFNSLhFTv4nkjhOCF+yG1RnOTtli6pZlevM7
+wQe2NU/z58JgMXVbPBA1Iphnu/xtEMHUF1P7WtVdhwXLEL4IY95ZedRduvmS
+RTwjrC8ekaoW5VC2ufbU5f2bwFkpP5dhL6L426boLLopqr9Z/KF2Tki5mPA/
+rt5jhseJjLnYjEyq/mHy8VsWFnhZ2WofanGa2rlic82i763QvNB692RTGiWY
+Pisp9wKohUtkLPsU6lj3m+01LrZwe1AVZ65IpLK81dbPHrVD0zh9pbVKPBXY
+kxjMIhzw6lmUUcWRaKpDXcc97JAjnm59/upmZRjFWp5S+DZ2H4z3hvhd6vWn
+/D5Zb3E96ozBiQ+J2bvcqTJpl57iB1fQOrLu0RLX42qO5YCc44bSo0wJDZ6I
+/cXaTeLsjsUmNtXZ7CC03y4fF/pwkPfZ27zWOAIhe3a0hngdgGOBxfvM2hiU
+XGE1hIV6oNY7kXuqLgHiT62pkfFcNMmNvzCLkzFceTyOiPZECnu4wFI7FZ0O
+Z4vS0g7i0egf8XYF6VDZ3/8yN8UL++rtGPrDp0GzaVQpPXEIOX3Boc5bzuDM
+GoWLPNMbaj3kzJAsC5HegTcU6T6QPvL3dPgowlCqWRD7nC9Cf7Wc0orMxVf5
+F/qFZTykJ/+lf+FjHiq0Np/oKT6MFyYhjOWrz6Ij2tB+Y9URcDtmnKwO5ENq
+VKpn7eGHgdf7n7gmFqA1aYpG9PrhVmNSg0hyDmud1GfWHfTHg+jrjcmPC3Ht
+vkn2k4f+GG2p+9pz7jxE3XOmRrwA6I81lw9ZXUB+zNtQv6cB4NWl5nsE/4ik
+VQbLGIcCoW64rndcWIyfTFRvxw4G4k68nGXXXQK1zyo6HYeDIOHZKJL+keCy
+ad1J6ZsgCLe2DRHMizAJqHSdDefjPTeLTm0vxcDe5nruKB9GPqt82d2lkMu+
+Y7JjgvGcu9Fam1+GL1fdrRjjwTBeo9MbNFmG+abohowIAaTV8Ro9WZfgZOpg
+nzQhQMVO3p9pm2To4W0LCYshYJbL8KxvkWFFINEiOU6giHZJtLtNhsNEGb03
+nsBM1NqbDykZ/o1eWW+WRKDTw8hU0SWD8RnF1OwpAhxdAw2rXhlS6ttFeYUE
+Isp12rpeyWCp7lbb0EygokVrwxM6iYylwgUjLQQ0mHm+oVok+pbf8NBtU+al
+y/KnV5Ag9MwmT95Q7knVpBlokzjP0rZ1vKPkOSztD2CQ+Owz+KD/KYHBPvWc
+d+Yk4K+zgf6CgN3uzM7kHSSygzkJ7CEl75ratKYVCUZUpx75Wtl/XpVg2ZBw
+z7jCD3+v/OO70DbOiURJ9tD1i2ME/O6lJai7khjJ09WQjyt57AU1RW4kUopF
+1eYKAiKGil4Ll8TvpV20kEkCY/kpHGcvEmsq5jjF08r/qjThM28SAVXflt+d
+JdAY9317BI9EdW2kYn6egO7I3MT8ERL/AWdqQsY=
+     "]]}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->True,
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0},
+  Method->{},
+  PlotRange->{{0, 200}, {-1131.9999236734686`, 2607.99992367347}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{
+    Scaled[0.02], 
+    Scaled[0.02]}]], "Output",
+ CellChangeTimes->{3.5985412358455877`*^9, 3.598541327840534*^9}]
+}, Open  ]]
+},
+WindowSize->{740, 845},
+WindowMargins->{{12, Automatic}, {Automatic, 24}},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 149, 3, 30, "Text"],
+Cell[709, 25, 227, 6, 28, "Input"],
+Cell[CellGroupData[{
+Cell[961, 35, 404, 11, 28, "Input"],
+Cell[1368, 48, 502, 13, 243, "Output"]
+}, Open  ]],
+Cell[1885, 64, 1073, 17, 201, "Text"],
+Cell[2961, 83, 250, 5, 30, "Text"],
+Cell[3214, 90, 341, 9, 46, "Input"],
+Cell[CellGroupData[{
+Cell[3580, 103, 213, 5, 28, "Input"],
+Cell[3796, 110, 246, 7, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4079, 122, 287, 7, 28, "Input"],
+Cell[4369, 131, 181, 4, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4587, 140, 258, 6, 28, "Input"],
+Cell[4848, 148, 2158, 42, 224, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
