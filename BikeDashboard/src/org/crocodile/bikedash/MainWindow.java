@@ -276,7 +276,13 @@ public class MainWindow
 
     protected void onQuit()
     {
-        reader.stop();
+        try
+        {
+            reader.stop();
+        } catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         System.exit(0);
     }
 

@@ -5,6 +5,8 @@ import jssc.*;
 
 public class SerialReader extends TickReader implements SerialPortEventListener
 {
+    StringBuffer        data = new StringBuffer();
+
     // TODO: move to preferences
     static final String PORT = "/dev/tty.usbmodem1411";
     private SerialPort  serialPort;
@@ -45,12 +47,18 @@ public class SerialReader extends TickReader implements SerialPortEventListener
         try
         {
             byte buffer[] = serialPort.readBytes(n);
-            System.out.println(buffer);
+            for(byte b : buffer)
+            {
+                if(b == '\n')
+                {
+                    broadcastTick(System.currentTimeMillis());
+                    data = new StringBuffer();
+                } else if(b != '\r')
+                    data.append(b);
+            }
         } catch(SerialPortException ex)
         {
             System.out.println(ex);
         }
-
     }
-
 }

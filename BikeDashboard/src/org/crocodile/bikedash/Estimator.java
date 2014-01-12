@@ -8,9 +8,10 @@ import org.crocodile.bikedash.TickReader.TickListener;
 
 public class Estimator implements TickListener
 {
-    static final int  WINDOW_SIZE = 5;
-    static final long MAX_DELAY   = 1000l;
-    static List<Long> buf         = new ArrayList<Long>(5);
+    static final int  TICKS_PER_ROTATION = 4;
+    static final int  WINDOW_SIZE        = 5;
+    static final long MAX_DELAY          = 1000l;
+    static List<Long> buf                = new ArrayList<Long>(5);
 
     public enum State
     {
@@ -91,8 +92,8 @@ public class Estimator implements TickListener
         }
         if(last == first)
             return 0;
-        float p = (last - first) / (float)(n - 1);
-        return (float) (1.0 / (p / 60000.0));
+        float p = (last - first) / (float) (n - 1);
+        return (float) (1.0 / (TICKS_PER_ROTATION*p / 60000.0));
     }
 
     /**
