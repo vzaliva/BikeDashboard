@@ -17,6 +17,8 @@ import org.crocodile.fitbit.FitbitApi;
 import org.scribe.model.*;
 import org.scribe.oauth.OAuthService;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+
 import javax.swing.*;
 
 public class MainWindow
@@ -359,7 +361,34 @@ public class MainWindow
 
     protected void onSave()
     {
-        JOptionPane.showMessageDialog(frame, "Not yet implemented!", "Warning", JOptionPane.WARNING_MESSAGE);
+        if(token == null)
+        {
+            JOptionPane.showMessageDialog(frame, "You must log in to FitBit first!", "Please Log In",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        long duration = estimator.getTime();
+        float calories = estimator.getCalories();
+        float averagespeed = estimator.getAverageSpeed();
+        try
+        {
+            submitToFitBit(System.currentTimeMillis(), duration, averagespeed, calories);
+            JOptionPane.showMessageDialog(frame, "Successfully submitted to FitBit:\n", "Submitted to FitBit",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(frame, "Error submitting to FitBit:\n" + e.getMessage(), "FitBit Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void submitToFitBit(long currentTimeMillis, long duration, float averagespeed, float calories)
+            throws Exception
+    {
+        // https://wiki.fitbit.com/display/API/API-Log-Activity
+        float mph = averagespeed * 1600 / 3600;
+        log.info("Recroding: duration=" + duration / 1000l + "s, avg. speed=" + mph + "MPH, calories=" + calories);
+        //TODO: actually submit
     }
 
     protected void onReset()

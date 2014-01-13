@@ -8,13 +8,15 @@ import org.crocodile.bikedash.TickReader.TickListener;
 
 public class Estimator implements TickListener
 {
-    private static final int  TICKS_PER_ROTATION = 4;
-    private static final int  WINDOW_SIZE        = 5;
-    private static final long MAX_DELAY          = 3000l;
-    private List<Long>        buf                = new ArrayList<Long>(3 * TICKS_PER_ROTATION);
-    private float             last_rpm           = 0f;
-    private long              last_rpm_time      = -1l;
-    private float             calories           = 0f;
+    private static final int   TICKS_PER_ROTATION = 4;
+    private static final int   WINDOW_SIZE        = 5;
+    private static final long  MAX_DELAY          = 3000l;
+    private static final float WHEEL_DIAMETER     = 0.597f;                                     // http://en.wikipedia.org/wiki/Bicycle_wheel#26_inch
+    private List<Long>         buf                = new ArrayList<Long>(3 * TICKS_PER_ROTATION);
+    private float              last_rpm           = 0f;
+    private long               last_rpm_time      = -1l;
+    private float              calories           = 0f;
+    private long               ticks;
 
     public enum State
     {
@@ -40,14 +42,16 @@ public class Estimator implements TickListener
         if(last_rpm != 0 && last_rpm_time != -1)
         {
             long dt = timeStamp - last_rpm_time;
-            float avgRPM = (last_rpm + rpm)/2;
+            float avgRPM = (last_rpm + rpm) / 2;
             float cal_per_hour = 18.7f * avgRPM - 1132f;
-            if(cal_per_hour>0 && dt>0)
-                calories+= (cal_per_hour/(60l*60l*1000l))*dt;
+            if(cal_per_hour > 0 && dt > 0)
+                calories += (cal_per_hour / (60l * 60l * 1000l)) * dt;
         }
 
         last_rpm = rpm;
         last_rpm_time = timeStamp;
+        if(state == State.RUNNING)
+            ticks++;
     }
 
     public void start()
@@ -82,6 +86,7 @@ public class Estimator implements TickListener
         last_rpm = 0f;
         last_rpm_time = -1l;
         calories = 0l;
+        ticks = 0l;
     }
 
     public State getState()
@@ -136,4 +141,14 @@ public class Estimator implements TickListener
         return calories;
     }
 
+    /**
+     * @return average speed during last time period in M/s
+     */
+    public float getAverageSpeed()
+    {
+        long t = getTime();
+        if(t == 0)
+            return 0f;
+        return (float) ((ticks / TICKS_PER_ROTATION) * Math.PI * WHEEL_DIAMETER / (t / 1000l));
+    }
 }
