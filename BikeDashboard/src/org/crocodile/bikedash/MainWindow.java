@@ -11,7 +11,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import org.crocodile.fitbit.ActivityLogger;
+import org.crocodile.fitbit.FitBitHelper;
 
 public class MainWindow
 {
@@ -45,13 +45,13 @@ public class MainWindow
 
     private JMenuItem           mntmLogin;
     private JMenuItem           mntmLogout;
-    
-    private ActivityLogger activity_logger;
+
+    private FitBitHelper        fitbit_helper;
 
     public static boolean isOSX()
     {
         String osName = System.getProperty("os.name");
-        return osName.contains("OS X");
+        return osName != null && osName.contains("OS X");
     }
 
     private void initLog()
@@ -109,7 +109,7 @@ public class MainWindow
     {
         initLog();
         prefs = Preferences.userRoot().node("org.crocodile.bikedash");
-        activity_logger = new ActivityLogger(prefs, log);
+        fitbit_helper = new FitBitHelper(prefs, log);
 
         initialize();
         updateButtonsAndColors();
@@ -126,7 +126,7 @@ public class MainWindow
 
     private void updateMenu()
     {
-        if(activity_logger.isLoggedIn())
+        if(fitbit_helper.isLoggedIn())
         {
             mntmLogin.setEnabled(true);
             mntmLogout.setEnabled(false);
@@ -390,7 +390,7 @@ public class MainWindow
 
     protected void onSave()
     {
-        if(activity_logger.isLoggedIn())
+        if(fitbit_helper.isLoggedIn())
         {
             JOptionPane.showMessageDialog(frame, "You must log in to FitBit first!", "Please Log In",
                     JOptionPane.ERROR_MESSAGE);
@@ -415,7 +415,7 @@ public class MainWindow
             throws Exception
     {
         // https://wiki.fitbit.com/display/API/API-Log-Activity
-        activity_logger.send(currentTimeMillis, duration, averagespeed, calories);
+        fitbit_helper.logActivity(currentTimeMillis, duration, averagespeed, calories);
     }
 
     protected void onReset()
@@ -503,7 +503,7 @@ public class MainWindow
     {
         try
         {
-            activity_logger.logout();
+            fitbit_helper.logout();
             updateMenu();
         } catch(Exception e)
         {
@@ -516,9 +516,8 @@ public class MainWindow
 
     protected void onLogin()
     {
-        activity_logger.login(frame);
+        fitbit_helper.login(frame);
         updateMenu();
     }
-
 
 }
