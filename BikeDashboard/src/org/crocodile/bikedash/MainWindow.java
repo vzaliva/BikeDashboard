@@ -433,11 +433,6 @@ public class MainWindow
         updateButtonsAndColors();
     }
 
-    protected void updateDisplay()
-    {
-
-    }
-
     protected void onLogout()
     {
         try
