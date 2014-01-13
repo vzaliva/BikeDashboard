@@ -389,6 +389,16 @@ public class MainWindow
         float mph = averagespeed * 1600 / 3600;
         log.info("Recroding: duration=" + duration / 1000l + "s, avg. speed=" + mph + "MPH, calories=" + calories);
         //TODO: actually submit
+        
+        //{
+        //    "activityId": 1020,
+        //    "calories": 10,
+        //    "description": "Leisurely - 10 to 11.9mph",
+        //    "distance": 0,
+        //    "duration": 600000,
+        //    "name": "Bicycling"
+        //  }
+        
     }
 
     protected void onReset()
