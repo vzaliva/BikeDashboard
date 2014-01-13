@@ -3,23 +3,20 @@ package org.crocodile.bikedash;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.scribe.builder.ServiceBuilder;
-import org.crocodile.fitbit.FitbitApi;
-import org.scribe.model.*;
-import org.scribe.oauth.OAuthService;
-
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-
 import javax.swing.*;
+
+import org.crocodile.fitbit.FitbitApi;
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.model.Token;
+import org.scribe.model.Verifier;
+import org.scribe.oauth.OAuthService;
 
 public class MainWindow
 {
