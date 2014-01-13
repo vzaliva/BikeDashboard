@@ -4,29 +4,20 @@ package org.crocodile.bikedash;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.*;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
 import org.crocodile.fitbit.ActivityLogger;
-import org.crocodile.fitbit.FitbitApi;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.model.Token;
-import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
 
 public class MainWindow
 {
     private static final int    METERS_IN_MILE               = 1609;
 
     private static final String PREF_PORT                    = "port";
-    private static final String PREF_FITBITSECRET            = "fitbitsecret";
-    private static final String PREF_FITBITTOKEN             = "fitbittoken";
     private static final String VERSION                      = "1.0";
 
     private Estimator           estimator                    = new Estimator();
@@ -51,13 +42,11 @@ public class MainWindow
     private Timer               timer                        = new Timer();
     private Preferences         prefs;
     private Logger              log;
-    private Token               token;
 
     private JMenuItem           mntmLogin;
     private JMenuItem           mntmLogout;
-
-    private static final String fITBIT_API_KEY               = "800918c46b204134aca64fa1e1bb8a38";
-    private static final String FITBIT_API_SECRET            = "1826e44b68fd4ff6b855a3e3722a7af7";
+    
+    private ActivityLogger activity_logger;
 
     public static boolean isOSX()
     {
@@ -120,7 +109,7 @@ public class MainWindow
     {
         initLog();
         prefs = Preferences.userRoot().node("org.crocodile.bikedash");
-        loadToken();
+        activity_logger = new ActivityLogger(prefs, log);
 
         initialize();
         updateButtonsAndColors();
@@ -137,7 +126,7 @@ public class MainWindow
 
     private void updateMenu()
     {
-        if(token == null)
+        if(activity_logger.isLoggedIn())
         {
             mntmLogin.setEnabled(true);
             mntmLogout.setEnabled(false);
@@ -401,7 +390,7 @@ public class MainWindow
 
     protected void onSave()
     {
-        if(token == null)
+        if(activity_logger.isLoggedIn())
         {
             JOptionPane.showMessageDialog(frame, "You must log in to FitBit first!", "Please Log In",
                     JOptionPane.ERROR_MESSAGE);
@@ -426,8 +415,7 @@ public class MainWindow
             throws Exception
     {
         // https://wiki.fitbit.com/display/API/API-Log-Activity
-        ActivityLogger logger = new ActivityLogger(prefs, log, token);
-        logger.send(currentTimeMillis, duration, averagespeed, calories);
+        activity_logger.send(currentTimeMillis, duration, averagespeed, calories);
     }
 
     protected void onReset()
@@ -515,10 +503,9 @@ public class MainWindow
     {
         try
         {
-            saveToken();
-            token = null;
+            activity_logger.logout();
             updateMenu();
-        } catch(BackingStoreException e)
+        } catch(Exception e)
         {
             JOptionPane
                     .showMessageDialog(frame, "Error clearning" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -529,83 +516,9 @@ public class MainWindow
 
     protected void onLogin()
     {
-        OAuthService service = new ServiceBuilder().provider(FitbitApi.class).apiKey(fITBIT_API_KEY)
-                .apiSecret(FITBIT_API_SECRET).build();
-
-        log.log(Level.FINE, "Starting Fitbit's OAuth Workflow");
-        log.log(Level.FINE, "Fetching the Request Token...");
-        Token requestToken = service.getRequestToken();
-        log.log(Level.FINE, "Got the Request Token!");
-
-        String url = service.getAuthorizationUrl(requestToken);
-        log.log(Level.FINE, "Now go and authorize Scribe here: " + url);
-        try
-        {
-            openBrowser(url);
-        } catch(Exception e)
-        {
-            JOptionPane.showMessageDialog(frame, "Error opening browser:\n" + e.getMessage(), "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
-            log.log(Level.WARNING, "Error opening browswer reader", e);
-            return;
-        }
-
-        String verifier_s = (String) JOptionPane.showInputDialog(frame, "Please enter PIN string provided by FitBit",
-                "FitBit PIT", JOptionPane.QUESTION_MESSAGE);
-        Verifier verifier = new Verifier(verifier_s);
-
-        log.log(Level.FINE, "Trading the Request Token for an Access Token...");
-        token = service.getAccessToken(requestToken, verifier);
-        log.log(Level.FINE, "Got the Access Token: " + token + " )");
-
-        try
-        {
-            saveToken();
-        } catch(BackingStoreException e)
-        {
-            token = null;
-            JOptionPane.showMessageDialog(frame, "Error saving token" + e.getMessage(), "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
-            log.log(Level.WARNING, "Error saving token", e);
-        }
+        activity_logger.login(frame);
         updateMenu();
     }
 
-    private void loadToken()
-    {
-        String t = prefs.get(PREF_FITBITTOKEN, null);
-        String s = prefs.get(PREF_FITBITSECRET, null);
-        if(t == null || s == null)
-            token = null;
-        else
-            token = new Token(t, s);
-    }
-
-    private void saveToken() throws BackingStoreException
-    {
-        if(token == null)
-        {
-            prefs.remove(PREF_FITBITTOKEN);
-            prefs.remove(PREF_FITBITSECRET);
-        } else
-        {
-            prefs.put(PREF_FITBITTOKEN, token.getToken());
-            prefs.put(PREF_FITBITSECRET, token.getSecret());
-        }
-        prefs.sync();
-    }
-
-    private void openBrowser(String url) throws Exception
-    {
-        if(Desktop.isDesktopSupported())
-        {
-            Desktop.getDesktop().browse(new URI(url));
-        } else
-        {
-            // MacOS
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("/usr/bin/open '" + url + "'");
-        }
-    }
 
 }
