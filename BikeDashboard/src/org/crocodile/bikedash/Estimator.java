@@ -142,13 +142,22 @@ public class Estimator implements TickListener
     }
 
     /**
-     * @return average speed during last time period in M/s
+     * 
+     * @return Distance "cycled" during last active period in meters;
+     */
+    public float getDistance()
+    {
+        return (float) ((ticks / TICKS_PER_ROTATION) * Math.PI * WHEEL_DIAMETER);
+    }
+
+    /**
+     * @return average "moving" speed during last time period in M/s
      */
     public float getAverageSpeed()
     {
         long t = getTime();
         if(t == 0)
             return 0f;
-        return (float) ((ticks / TICKS_PER_ROTATION) * Math.PI * WHEEL_DIAMETER / (t / 1000l));
+        return (float) (getDistance() / (t / 1000l));
     }
 }
