@@ -3,16 +3,29 @@ package org.crocodile.bikedash;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.*;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import org.scribe.builder.ServiceBuilder;
+import org.crocodile.fitbit.FitbitApi;
+import org.scribe.model.*;
+import org.scribe.oauth.OAuthService;
 
 import javax.swing.*;
 
 public class MainWindow
 {
+    private static final String PREF_PORT                    = "port";
+    private static final String PREF_FITBITSECRET            = "fitbitsecret";
+    private static final String PREF_FITBITTOKEN             = "fitbittoken";
     private static final String VERSION                      = "1.0";
+
     private Estimator           estimator                    = new Estimator();
 
     private static final Color  STOPPED_COLOR                = new Color(0, 128, 0);
@@ -33,7 +46,14 @@ public class MainWindow
 
     private Timer               timer                        = new Timer();
     private Preferences         prefs;
-    private Logger log;
+    private Logger              log;
+    private Token               token;
+
+    private JMenuItem           mntmLogin;
+    private JMenuItem           mntmLogout;
+
+    private static final String fITBIT_API_KEY               = "800918c46b204134aca64fa1e1bb8a38";
+    private static final String FITBIT_API_SECRET            = "1826e44b68fd4ff6b855a3e3722a7af7";
 
     public static boolean isOSX()
     {
@@ -44,8 +64,9 @@ public class MainWindow
     private void initLog()
     {
         log = Logger.getLogger("org.crocodile.bikedash");
-        log.setLevel(Level.ALL);
+        log.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.FINE);
         handler.setFormatter(new SimpleFormatter());
         log.addHandler(handler);
     }
@@ -95,9 +116,11 @@ public class MainWindow
     {
         initLog();
         prefs = Preferences.userRoot().node("org.crocodile.bikedash");
+        loadToken();
 
         initialize();
         updateButtonsAndColors();
+        updateMenu();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -106,6 +129,20 @@ public class MainWindow
                 updateMesurementDisplay();
             }
         }, 0, MEASURMENTS_UI_UPDATE_PERIOD);
+    }
+
+    private void updateMenu()
+    {
+        if(token == null)
+        {
+            mntmLogin.setEnabled(true);
+            mntmLogout.setEnabled(false);
+        } else
+        {
+            mntmLogin.setEnabled(false);
+            mntmLogout.setEnabled(true);
+        }
+
     }
 
     protected void updateMesurementDisplay()
@@ -269,7 +306,7 @@ public class MainWindow
         JMenu mnFitBit = new JMenu("FitBit");
         menuBar.add(mnFitBit);
 
-        JMenuItem mntmLogin = new JMenuItem("Login");
+        mntmLogin = new JMenuItem("Login");
         mntmLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
@@ -278,7 +315,7 @@ public class MainWindow
         });
         mnFitBit.add(mntmLogin);
 
-        JMenuItem mntmLogout = new JMenuItem("Logout");
+        mntmLogout = new JMenuItem("Logout");
         mntmLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
@@ -287,7 +324,6 @@ public class MainWindow
         });
         mnFitBit.add(mntmLogout);
 
-        
         JMenu mnHelp = new JMenu("Help");
         mnHelp.setMnemonic('H');
         mnHelp.setMnemonic(KeyEvent.VK_HELP);
@@ -301,18 +337,6 @@ public class MainWindow
             }
         });
         mnHelp.add(mntmAbout);
-    }
-
-    protected void onLogout()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    protected void onLogin()
-    {
-        // TODO Auto-generated method stub
-        
     }
 
     protected void onAbout()
@@ -380,7 +404,7 @@ public class MainWindow
         {
             try
             {
-                String port = prefs.get("port", null);
+                String port = prefs.get(PREF_PORT, null);
                 if(port == null)
                 {
                     // Port not set, try to find it automatically
@@ -413,4 +437,102 @@ public class MainWindow
     {
 
     }
+
+    protected void onLogout()
+    {
+        try
+        {
+            saveToken();
+            token = null;
+            updateMenu();
+        } catch(BackingStoreException e)
+        {
+            JOptionPane
+                    .showMessageDialog(frame, "Error clearning" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            log.log(Level.WARNING, "Error clearning token", e);
+        }
+
+    }
+
+    protected void onLogin()
+    {
+        OAuthService service = new ServiceBuilder().provider(FitbitApi.class).apiKey(fITBIT_API_KEY)
+                .apiSecret(FITBIT_API_SECRET).build();
+
+        log.log(Level.FINE, "Starting Fitbit's OAuth Workflow");
+        log.log(Level.FINE, "Fetching the Request Token...");
+        Token requestToken = service.getRequestToken();
+        log.log(Level.FINE, "Got the Request Token!");
+
+        String url = service.getAuthorizationUrl(requestToken);
+        log.log(Level.FINE, "Now go and authorize Scribe here: " + url);
+        try
+        {
+            openBrowser(url);
+        } catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(frame, "Error opening browser:\n" + e.getMessage(), "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+            log.log(Level.WARNING, "Error opening browswer reader", e);
+            return;
+        }
+
+        String verifier_s = (String) JOptionPane.showInputDialog(frame, "Please enter PIN string provided by FitBit",
+                "FitBit PIT", JOptionPane.QUESTION_MESSAGE);
+        Verifier verifier = new Verifier(verifier_s);
+
+        log.log(Level.FINE, "Trading the Request Token for an Access Token...");
+        token = service.getAccessToken(requestToken, verifier);
+        log.log(Level.FINE, "Got the Access Token: " + token + " )");
+
+        try
+        {
+            saveToken();
+        } catch(BackingStoreException e)
+        {
+            token = null;
+            JOptionPane.showMessageDialog(frame, "Error saving token" + e.getMessage(), "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+            log.log(Level.WARNING, "Error saving token", e);
+        }
+        updateMenu();
+    }
+
+    private void loadToken()
+    {
+        String t = prefs.get(PREF_FITBITTOKEN, null);
+        String s = prefs.get(PREF_FITBITSECRET, null);
+        if(t == null || s == null)
+            token = null;
+        else
+            token = new Token(t, s);
+    }
+
+    private void saveToken() throws BackingStoreException
+    {
+        if(token == null)
+        {
+            prefs.remove(PREF_FITBITTOKEN);
+            prefs.remove(PREF_FITBITSECRET);
+        } else
+        {
+            prefs.put(PREF_FITBITTOKEN, token.getToken());
+            prefs.put(PREF_FITBITSECRET, token.getSecret());
+        }
+        prefs.sync();
+    }
+
+    private void openBrowser(String url) throws Exception
+    {
+        if(Desktop.isDesktopSupported())
+        {
+            Desktop.getDesktop().browse(new URI(url));
+        } else
+        {
+            // MacOS
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("/usr/bin/open '" + url + "'");
+        }
+    }
+
 }
