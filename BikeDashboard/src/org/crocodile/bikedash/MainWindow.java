@@ -3,6 +3,7 @@ package org.crocodile.bikedash;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,6 +21,7 @@ import org.scribe.oauth.OAuthService;
 
 public class MainWindow
 {
+    private static final int    METERS_IN_MILE               = 1609;
     private static final String PREF_PORT                    = "port";
     private static final String PREF_FITBITSECRET            = "fitbitsecret";
     private static final String PREF_FITBITTOKEN             = "fitbittoken";
@@ -42,6 +44,7 @@ public class MainWindow
     private JLabel              lblTimeVal;
     private JLabel              lblRPMVal;
     private JLabel              lblCalVal;
+    private JLabel              lblDistanceVal;
 
     private Timer               timer                        = new Timer();
     private Preferences         prefs;
@@ -153,6 +156,10 @@ public class MainWindow
         lblTimeVal.setText(String.format("%02d:%02d:%02d", h, m, s));
         lblRPMVal.setText("" + Math.round(estimator.getRPM()));
         lblCalVal.setText("" + Math.round(estimator.getCalories()));
+
+        double roundedDist = BigDecimal.valueOf(estimator.getDistance() / METERS_IN_MILE)
+                .setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        lblDistanceVal.setText("" + roundedDist);
     }
 
     /**
@@ -166,9 +173,9 @@ public class MainWindow
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 88, 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 29, 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 29, 0, 0 };
         gridBagLayout.columnWeights = new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
         frame.getContentPane().setLayout(gridBagLayout);
 
         JLabel lblTime = new JLabel("Time");
@@ -177,7 +184,7 @@ public class MainWindow
         GridBagConstraints gbc_lblTime = new GridBagConstraints();
         gbc_lblTime.insets = new Insets(0, 0, 5, 5);
         gbc_lblTime.gridx = 1;
-        gbc_lblTime.gridy = 1;
+        gbc_lblTime.gridy = 2;
         frame.getContentPane().add(lblTime, gbc_lblTime);
 
         lblTimeVal = new JLabel("10:25");
@@ -188,17 +195,44 @@ public class MainWindow
         gbc_lblTimeVal.gridwidth = 2;
         gbc_lblTimeVal.insets = new Insets(0, 0, 5, 5);
         gbc_lblTimeVal.gridx = 2;
-        gbc_lblTimeVal.gridy = 1;
+        gbc_lblTimeVal.gridy = 2;
         frame.getContentPane().add(lblTimeVal, gbc_lblTimeVal);
 
-        JLabel lblRpm = new JLabel("RPM");
-        lblRpm.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblRpm.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-        GridBagConstraints gbc_lblRpm = new GridBagConstraints();
-        gbc_lblRpm.insets = new Insets(0, 0, 5, 5);
-        gbc_lblRpm.gridx = 1;
-        gbc_lblRpm.gridy = 2;
-        frame.getContentPane().add(lblRpm, gbc_lblRpm);
+        JLabel lblDistance = new JLabel("Distance");
+        lblDistance.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblDistance.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+        GridBagConstraints gbc_lblDistance = new GridBagConstraints();
+        gbc_lblDistance.insets = new Insets(0, 0, 5, 5);
+        gbc_lblDistance.gridx = 1;
+        gbc_lblDistance.gridy = 3;
+        frame.getContentPane().add(lblDistance, gbc_lblDistance);
+
+        lblDistanceVal = new JLabel("0");
+        lblDistanceVal.setForeground(new Color(0, 128, 0));
+        lblDistanceVal.setFont(new Font("Lucida Grande", Font.BOLD, 40));
+        lblDistanceVal.setBackground(Color.GRAY);
+        GridBagConstraints gbc_lblSpeedVal = new GridBagConstraints();
+        gbc_lblSpeedVal.gridwidth = 2;
+        gbc_lblSpeedVal.insets = new Insets(0, 0, 5, 5);
+        gbc_lblSpeedVal.gridx = 2;
+        gbc_lblSpeedVal.gridy = 3;
+        frame.getContentPane().add(lblDistanceVal, gbc_lblSpeedVal);
+
+        JLabel lblMiles = new JLabel("Miles");
+        GridBagConstraints gbc_lblMiles = new GridBagConstraints();
+        gbc_lblMiles.insets = new Insets(0, 0, 5, 0);
+        gbc_lblMiles.gridx = 4;
+        gbc_lblMiles.gridy = 3;
+        frame.getContentPane().add(lblMiles, gbc_lblMiles);
+
+        JLabel lblCadence = new JLabel("Cadence");
+        lblCadence.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblCadence.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+        GridBagConstraints gbc_lblCadence = new GridBagConstraints();
+        gbc_lblCadence.insets = new Insets(0, 0, 5, 5);
+        gbc_lblCadence.gridx = 1;
+        gbc_lblCadence.gridy = 4;
+        frame.getContentPane().add(lblCadence, gbc_lblCadence);
 
         lblRPMVal = new JLabel("25");
         lblRPMVal.setForeground(STOPPED_COLOR);
@@ -208,8 +242,15 @@ public class MainWindow
         gbc_lblRPMVal.gridwidth = 2;
         gbc_lblRPMVal.insets = new Insets(0, 0, 5, 5);
         gbc_lblRPMVal.gridx = 2;
-        gbc_lblRPMVal.gridy = 2;
+        gbc_lblRPMVal.gridy = 4;
         frame.getContentPane().add(lblRPMVal, gbc_lblRPMVal);
+
+        JLabel lblRpm = new JLabel("RPM");
+        GridBagConstraints gbc_lblRpm = new GridBagConstraints();
+        gbc_lblRpm.insets = new Insets(0, 0, 5, 0);
+        gbc_lblRpm.gridx = 4;
+        gbc_lblRpm.gridy = 4;
+        frame.getContentPane().add(lblRpm, gbc_lblRpm);
 
         JLabel lblCalroies = new JLabel("Calroies");
         lblCalroies.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -217,7 +258,7 @@ public class MainWindow
         GridBagConstraints gbc_lblCalroies = new GridBagConstraints();
         gbc_lblCalroies.insets = new Insets(0, 0, 5, 5);
         gbc_lblCalroies.gridx = 1;
-        gbc_lblCalroies.gridy = 3;
+        gbc_lblCalroies.gridy = 5;
         frame.getContentPane().add(lblCalroies, gbc_lblCalroies);
 
         lblCalVal = new JLabel("415");
@@ -228,7 +269,7 @@ public class MainWindow
         gbc_lblCalVal.gridwidth = 2;
         gbc_lblCalVal.insets = new Insets(0, 0, 5, 5);
         gbc_lblCalVal.gridx = 2;
-        gbc_lblCalVal.gridy = 3;
+        gbc_lblCalVal.gridy = 5;
         frame.getContentPane().add(lblCalVal, gbc_lblCalVal);
 
         btnStop = new JButton("Stop");
@@ -249,12 +290,12 @@ public class MainWindow
         GridBagConstraints gbc_btnRecord = new GridBagConstraints();
         gbc_btnRecord.insets = new Insets(0, 0, 0, 5);
         gbc_btnRecord.gridx = 1;
-        gbc_btnRecord.gridy = 5;
+        gbc_btnRecord.gridy = 7;
         frame.getContentPane().add(btnRecord, gbc_btnRecord);
         GridBagConstraints gbc_btnStop = new GridBagConstraints();
         gbc_btnStop.insets = new Insets(0, 0, 0, 5);
         gbc_btnStop.gridx = 2;
-        gbc_btnStop.gridy = 5;
+        gbc_btnStop.gridy = 7;
         frame.getContentPane().add(btnStop, gbc_btnStop);
 
         btnReset = new JButton("Reset");
@@ -267,7 +308,7 @@ public class MainWindow
         GridBagConstraints gbc_btnReset = new GridBagConstraints();
         gbc_btnReset.insets = new Insets(0, 0, 0, 5);
         gbc_btnReset.gridx = 3;
-        gbc_btnReset.gridy = 5;
+        gbc_btnReset.gridy = 7;
         frame.getContentPane().add(btnReset, gbc_btnReset);
 
         btnSave = new JButton("Save");
@@ -279,7 +320,7 @@ public class MainWindow
         });
         GridBagConstraints gbc_btnSave = new GridBagConstraints();
         gbc_btnSave.gridx = 4;
-        gbc_btnSave.gridy = 5;
+        gbc_btnSave.gridy = 7;
         frame.getContentPane().add(btnSave, gbc_btnSave);
 
         JMenuBar menuBar = new JMenuBar();
@@ -383,19 +424,19 @@ public class MainWindow
             throws Exception
     {
         // https://wiki.fitbit.com/display/API/API-Log-Activity
-        float mph = averagespeed * 1600 / 3600;
+        float mph = averagespeed * METERS_IN_MILE / 3600;
         log.info("Recroding: duration=" + duration / 1000l + "s, avg. speed=" + mph + "MPH, calories=" + calories);
-        //TODO: actually submit
-        
-        //{
-        //    "activityId": 1020,
-        //    "calories": 10,
-        //    "description": "Leisurely - 10 to 11.9mph",
-        //    "distance": 0,
-        //    "duration": 600000,
-        //    "name": "Bicycling"
-        //  }
-        
+        // TODO: actually submit
+
+        // {
+        // "activityId": 1020,
+        // "calories": 10,
+        // "description": "Leisurely - 10 to 11.9mph",
+        // "distance": 0,
+        // "duration": 600000,
+        // "name": "Bicycling"
+        // }
+
     }
 
     protected void onReset()
@@ -416,6 +457,7 @@ public class MainWindow
             lblTimeVal.setForeground(RUNNING_COLOR);
             lblRPMVal.setForeground(RUNNING_COLOR);
             lblCalVal.setForeground(RUNNING_COLOR);
+            lblDistanceVal.setForeground(RUNNING_COLOR);
             break;
         case STOPPED:
             btnRecord.setEnabled(true);
@@ -424,6 +466,7 @@ public class MainWindow
             lblTimeVal.setForeground(STOPPED_COLOR);
             lblRPMVal.setForeground(STOPPED_COLOR);
             lblCalVal.setForeground(STOPPED_COLOR);
+            lblDistanceVal.setForeground(STOPPED_COLOR);
             break;
         }
     }
@@ -436,6 +479,15 @@ public class MainWindow
 
     protected void onStart()
     {
+        // reader = new RandomTickReader();
+        // reader.addListener(estimator);
+        // try
+        // {
+        // reader.start();
+        // } catch(Exception e1)
+        // {
+        // }
+
         if(reader == null)
         {
             try
@@ -453,7 +505,6 @@ public class MainWindow
                         port = ports[0];
                 }
                 reader = new SerialReader(port);
-                // reader = new RandomTickReader();
                 reader.addListener(estimator);
                 reader.start();
             } catch(Exception e)
