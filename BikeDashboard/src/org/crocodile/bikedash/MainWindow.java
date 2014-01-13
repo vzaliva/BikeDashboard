@@ -128,12 +128,12 @@ public class MainWindow
     {
         if(fitbit_helper.isLoggedIn())
         {
-            mntmLogin.setEnabled(true);
-            mntmLogout.setEnabled(false);
-        } else
-        {
             mntmLogin.setEnabled(false);
             mntmLogout.setEnabled(true);
+        } else
+        {
+            mntmLogin.setEnabled(true);
+            mntmLogout.setEnabled(false);
         }
 
     }
@@ -390,7 +390,7 @@ public class MainWindow
 
     protected void onSave()
     {
-        if(fitbit_helper.isLoggedIn())
+        if(!fitbit_helper.isLoggedIn())
         {
             JOptionPane.showMessageDialog(frame, "You must log in to FitBit first!", "Please Log In",
                     JOptionPane.ERROR_MESSAGE);
