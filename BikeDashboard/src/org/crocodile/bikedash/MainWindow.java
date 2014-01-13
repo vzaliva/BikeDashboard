@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
+import org.crocodile.fitbit.ActivityLogger;
 import org.crocodile.fitbit.FitbitApi;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.Token;
@@ -22,6 +23,7 @@ import org.scribe.oauth.OAuthService;
 public class MainWindow
 {
     private static final int    METERS_IN_MILE               = 1609;
+
     private static final String PREF_PORT                    = "port";
     private static final String PREF_FITBITSECRET            = "fitbitsecret";
     private static final String PREF_FITBITTOKEN             = "fitbittoken";
@@ -424,19 +426,8 @@ public class MainWindow
             throws Exception
     {
         // https://wiki.fitbit.com/display/API/API-Log-Activity
-        float mph = averagespeed * METERS_IN_MILE / 3600;
-        log.info("Recroding: duration=" + duration / 1000l + "s, avg. speed=" + mph + "MPH, calories=" + calories);
-        // TODO: actually submit
-
-        // {
-        // "activityId": 1020,
-        // "calories": 10,
-        // "description": "Leisurely - 10 to 11.9mph",
-        // "distance": 0,
-        // "duration": 600000,
-        // "name": "Bicycling"
-        // }
-
+        ActivityLogger logger = new ActivityLogger(prefs, log, token);
+        logger.send(currentTimeMillis, duration, averagespeed, calories);
     }
 
     protected void onReset()
