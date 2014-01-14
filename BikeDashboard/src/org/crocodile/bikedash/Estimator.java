@@ -12,6 +12,7 @@ public class Estimator implements TickListener
     private static final int   WINDOW_SIZE        = 5;
     private static final long  MAX_DELAY          = 3000l;
     private static final float WHEEL_DIAMETER     = 0.597f;                                     // http://en.wikipedia.org/wiki/Bicycle_wheel#26_inch
+    private static final float GEAR_GAIN          = 5.2f;                                       // http://en.wikipedia.org/wiki/Bicycle_gearing#Examples
     private List<Long>         buf                = new ArrayList<Long>(3 * TICKS_PER_ROTATION);
     private float              last_rpm           = 0f;
     private long               last_rpm_time      = -1l;
@@ -147,7 +148,7 @@ public class Estimator implements TickListener
      */
     public float getDistance()
     {
-        return (float) ((ticks / TICKS_PER_ROTATION) * Math.PI * WHEEL_DIAMETER);
+        return (float) (GEAR_GAIN * (ticks / TICKS_PER_ROTATION) * Math.PI * WHEEL_DIAMETER);
     }
 
     /**
