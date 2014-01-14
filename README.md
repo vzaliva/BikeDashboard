@@ -3,7 +3,7 @@ BikeDashboard
 
 Dashboard for stationary bike.
 
-Designed to measure RPM and calculate burned calories on FitDesk stationry bike.
+Designed to measure RPM and calculate burned calories on [FitDesk](fitdesk.jpg) stationry bike.
 Using Arduino Uno as hadware interface. See 'schematics.jpeg' for details and Arduino/*
 for firmware.
 
