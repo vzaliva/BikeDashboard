@@ -22,3 +22,4 @@ Requirements:
 (Currently tested only under MacOS)
 
 
+![Screenshot](https://raw.github.com/vzaliva/BikeDashboard/master/screenshot.png)
