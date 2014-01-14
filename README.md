@@ -12,7 +12,7 @@ Requirements (stuff you need):
 
   * [Arduino Uno](http://arduino.cc/en/Main/ArduinoBoardUno)
   * 10K resistor
-  * Female mono jack ([like this](http://www.amazon.com/gp/product/B000067RC4/)
+  * Female mono jack [(like this)](http://www.amazon.com/gp/product/B000067RC4/
   * [FitDesk 2.0](http://fitdesk.net/)
   * Java 7 JDK (not JRE!)
 
