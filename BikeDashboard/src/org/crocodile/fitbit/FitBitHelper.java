@@ -2,7 +2,10 @@
 package org.crocodile.fitbit;
 
 import java.awt.Desktop;
+import java.math.BigDecimal;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -11,23 +14,26 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.scribe.builder.ServiceBuilder;
-import org.scribe.model.Token;
-import org.scribe.model.Verifier;
+import org.scribe.model.*;
 import org.scribe.oauth.OAuthService;
 
 public class FitBitHelper
 {
-    private static final int    METERS_IN_MILE    = 1609;
+    private static final String           ACTIVITY_NAME     = "Stationary Biking";
+    private static final String           PREF_FITBITSECRET = "fitbitsecret";
+    private static final String           PREF_FITBITTOKEN  = "fitbittoken";
 
-    private static final String PREF_FITBITSECRET = "fitbitsecret";
-    private static final String PREF_FITBITTOKEN  = "fitbittoken";
+    private static final String           fITBIT_API_KEY    = "800918c46b204134aca64fa1e1bb8a38";
+    private static final String           FITBIT_API_SECRET = "1826e44b68fd4ff6b855a3e3722a7af7";
 
-    private static final String fITBIT_API_KEY    = "800918c46b204134aca64fa1e1bb8a38";
-    private static final String FITBIT_API_SECRET = "1826e44b68fd4ff6b855a3e3722a7af7";
+    private static final String           ACTIVITY_ADD_URL  = "http://api.fitbit.com/1/user/-/activities.json";
 
-    private Preferences         prefs;
-    private Logger              log;
-    private Token               token;
+    private static final SimpleDateFormat TIME_FORMAT       = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat DATE_FORMAT       = new SimpleDateFormat("yyyy-MM-dd");
+
+    private Preferences                   prefs;
+    private Logger                        log;
+    private Token                         token;
 
     public FitBitHelper(Preferences prefs, Logger log)
     {
@@ -65,11 +71,10 @@ public class FitBitHelper
         prefs.sync();
     }
 
-
     public void login(JFrame frame)
     {
-        OAuthService service = new ServiceBuilder().provider(FitbitApi.class).apiKey(fITBIT_API_KEY)
-                .apiSecret(FITBIT_API_SECRET).build();
+        OAuthService service = new ServiceBuilder().provider(FitbitApi.class).apiKey(fITBIT_API_KEY).apiSecret(FITBIT_API_SECRET)
+                .build();
 
         log.log(Level.FINE, "Starting Fitbit's OAuth Workflow");
         log.log(Level.FINE, "Fetching the Request Token...");
@@ -127,22 +132,38 @@ public class FitBitHelper
         saveToken();
         token = null;
     }
-    
-    public void logActivity(long currentTimeMillis, long duration, float averagespeed, float calories)
+
+    public void logActivity(long start_time, long duration, float distance, float calories) throws Exception
     {
-        float mph = averagespeed * METERS_IN_MILE / 3600;
+        log.info("Recroding: duration=" + duration / 1000l + "s, avg. distance=" + distance + "MPH, calories="
+                + calories);
 
-        log.info("Recroding: duration=" + duration / 1000l + "s, avg. speed=" + mph + "MPH, calories=" + calories);
-        // TODO: actually submit
+        if(token == null)
+            throw new Exception("Must log in first to log activity");
 
-        // {
-        // "activityId": 1020,
-        // "calories": 10,
-        // "description": "Leisurely - 10 to 11.9mph",
-        // "distance": 0,
-        // "duration": 600000,
-        // "name": "Bicycling"
-        // }
+        OAuthService service = new ServiceBuilder().provider(FitbitApi.class).apiKey(fITBIT_API_KEY).apiSecret(FITBIT_API_SECRET)
+                .build();
+
+        Date date = new Date(start_time);
+        double roundedDist = BigDecimal.valueOf(distance / 1000).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        OAuthRequest request = new OAuthRequest(Verb.POST, ACTIVITY_ADD_URL);
+
+        request.addQuerystringParameter("activityName", ACTIVITY_NAME);
+        request.addQuerystringParameter("manualCalories", "" + Math.round(calories));
+        request.addQuerystringParameter("startTime", TIME_FORMAT.format(date));
+        request.addQuerystringParameter("durationMillis", "" + duration);
+        request.addQuerystringParameter("distance", "" + roundedDist);
+        request.addQuerystringParameter("date", DATE_FORMAT.format(date));
+
+        service.signRequest(token, request);
+        Response response = request.send();
+        if(!response.isSuccessful())
+        {
+            log.log(Level.SEVERE, "FitBit API Error: " + response.getMessage());
+            log.fine(response.getBody());
+            throw new Exception("FitBit API Error: " + response.getMessage());
+        }
     }
 
 }

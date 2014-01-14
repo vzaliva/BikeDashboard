@@ -398,10 +398,10 @@ public class MainWindow
         }
         long duration = estimator.getTime();
         float calories = estimator.getCalories();
-        float averagespeed = estimator.getAverageSpeed();
+        float distance = estimator.getDistance();
         try
         {
-            submitToFitBit(System.currentTimeMillis(), duration, averagespeed, calories);
+            fitbit_helper.logActivity(System.currentTimeMillis() - duration, duration, distance, calories);
             JOptionPane.showMessageDialog(frame, "Successfully submitted to FitBit:\n", "Submitted to FitBit",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch(Exception e)
@@ -409,13 +409,6 @@ public class MainWindow
             JOptionPane.showMessageDialog(frame, "Error submitting to FitBit:\n" + e.getMessage(), "FitBit Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void submitToFitBit(long currentTimeMillis, long duration, float averagespeed, float calories)
-            throws Exception
-    {
-        // https://wiki.fitbit.com/display/API/API-Log-Activity
-        fitbit_helper.logActivity(currentTimeMillis, duration, averagespeed, calories);
     }
 
     protected void onReset()
