@@ -11,6 +11,7 @@ The software submits workout results to FitBit web site using their API and will
 Requirements (stuff you need):
 
   * [Arduino Uno](http://arduino.cc/en/Main/ArduinoBoardUno)
+  * USB A Male to B Male Cable [(like this)](http://www.amazon.com/Mediabridge-2-0-Male-Cable-Feet/dp/B001MSZBNA/)
   * 10K resistor
   * Female mono jack [(like this)](http://www.amazon.com/gp/product/B000067RC4/
   * [FitDesk 2.0](http://fitdesk.net/)
