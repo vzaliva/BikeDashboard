@@ -4,22 +4,20 @@ BikeDashboard
 Dashboard for stationary bike.
 
 Designed to measure RPM and calculate burned calories on [FitDesk](fitdesk.jpg) stationry bike.
-Using Arduino Uno as hadware interface. See [Schematics](schematics.jpeg) for details and [Arduno folder](Arduino/)
-for firmware.
+Using Arduino Uno as hadware interface. See [schematics](schematics.jpeg) for hardware interfacing details and [Arduno folder](Arduino/monitor_pin/) for firmware files.
 
-Submit workout results to FitBit web site using their API and will be visible in
-their activity log:
+The software submits workout results to FitBit web site using their API and will be visible in their [activity log](https://www.fitbit.com/activities).
 
- https://www.fitbit.com/activities
+Requirements (stuff you need):
 
-Requirements:
-
-  * Arduino Uno http://arduino.cc/en/Main/ArduinoBoardUno
-  * FitDesk 2.0 http://fitdesk.net/
-  * https://code.google.com/p/java-simple-serial-connector/
+  * [Arduino Uno](http://arduino.cc/en/Main/ArduinoBoardUno)
+  * 10K resistor
+  * Female mono jack ([like this](http://www.amazon.com/gp/product/B000067RC4/)
+  * [FitDesk 2.0](http://fitdesk.net/)
   * Java 7 JDK (not JRE!)
 
 (Currently tested only under MacOS)
 
+Screenshot:
 
 ![Screenshot](/screenshot.png)
