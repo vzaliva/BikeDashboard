@@ -472,8 +472,11 @@ public class MainWindow
                     if(ports == null || ports.length == 0)
                         throw new Exception("Device not connected!");
                     else if(ports.length > 1)
-                        throw new Exception("More than one port available. Please choose via preferences!");
-                    else
+                    {
+                        JComboBox<String> choices = new JComboBox<String>(ports);
+                        JOptionPane.showMessageDialog(frame, choices, "Select USB port", JOptionPane.PLAIN_MESSAGE);
+                        port = (String) choices.getSelectedItem();
+                    } else
                         port = ports[0];
                 }
                 reader = new SerialReader(port);
