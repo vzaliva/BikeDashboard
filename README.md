@@ -9,18 +9,16 @@ There are two versions of hardware design using two different Arduino
 boards. You can use either design:
 
 
-Design 1: Arduino Uno 
+Design 1: [Arduino Uno](http://arduino.cc/en/Main/ArduinoBoardUno) is
+used with 10K pull-up resistor.  See
+[schematics](Arduino/schematics.png) for hardware interfacing details
+and [Arduno folder](Arduino/monitor_pin/) for firmware files.
 
-[Arduino Uno](http://arduino.cc/en/Main/ArduinoBoardUno) is used with
-10K pull-up resistor.  See [schematics](Arduino/schematics.png) for
-hardware interfacing details and [Arduno folder](Arduino/monitor_pin/)
-for firmware files.
-
-Design 2: Arduino Nano
-[Arduino Nano](http://arduino.cc/en/Main/arduinoBoardNano) is used. No
-external pull-up resistor required. All you need to connect your bike
-to GND and D3 pins. This is simpler and more compact design. It could
-be mounted in this [3D-printed Arduino Nano case](http://www.thingiverse.com/thing:178175).
+Design 2: [Arduino Nano](http://arduino.cc/en/Main/arduinoBoardNano)
+is used. No external pull-up resistor required. All you need to
+connect your bike to GND and D3 pins. This is simpler and more compact
+design. It could be mounted in this
+[3D-printed Arduino Nano case](http://www.thingiverse.com/thing:178175).
 
 The software submits workout results to FitBit web site using their
 API and will be visible in their
