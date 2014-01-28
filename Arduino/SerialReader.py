@@ -2,7 +2,8 @@
 
 # requires PySerial. On MacOS (port install py-serial)
 
-DEV='/dev/tty.usbmodem1411'
+DEV='/dev/tty.usbmodem1411' # Uno
+DEV='/dev/tty.usbserial-A602KBWT' #Nano
 
 import serial
 import sys
